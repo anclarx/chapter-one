@@ -1,0 +1,14 @@
+package com.library.chapter.infrastructure.repository;
+
+import com.library.chapter.domain.model.BookModel;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface BookRepository extends JpaRepository<BookModel, Long> {
+
+    List<BookModel> findByTitleContaining(String title);
+    List<BookModel> findByAuthorNameContaining(String authorName);
+}

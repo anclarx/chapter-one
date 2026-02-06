@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -15,9 +16,13 @@ public class BookResponseDTO {
     private Long id;
     private String title;
     private String isbn;
-    private AuthorSummaryDTO author;
+    // private String callNumber;
+
+    private List<AuthorSummaryDTO> authors;
+
     private String publisher;
     private String description;
+
     private Integer edition;
     private Integer pages;
     private LocalDate publicationDate;

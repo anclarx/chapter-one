@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,9 +40,13 @@ public class BookModel {
     @Valid
     @ConvertGroup(from = Default.class, to = BookValidation.class)
     @NotNull
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    private AuthorModel author;
+    @JoinTable(
+            name = "books_authors_relationship",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<AuthorModel> authors;
 
     @Size(min = 3, max = 255)
     private String publisher;

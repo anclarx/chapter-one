@@ -14,7 +14,9 @@ import org.mapstruct.MappingTarget;
 public interface AuthorMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "books", ignore = true)
     AuthorModel toEntity(AuthorRequestDTO author);
+
     AuthorResponseDTO toResponse(AuthorModel entity);
 
     @Mapping(target = "id", ignore = true)

@@ -34,7 +34,7 @@ public class AuthorModel {
     @Column(unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "authors", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<BookModel> books;
 

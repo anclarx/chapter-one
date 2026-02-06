@@ -4,6 +4,7 @@ import com.library.chapter.api.dto.book.BookRequestDTO;
 import com.library.chapter.api.dto.book.BookResponseDTO;
 import com.library.chapter.application.mapper.BookMapper;
 import com.library.chapter.domain.exception.AuthorNotFoundException;
+import com.library.chapter.domain.exception.AuthorsNotFoundException;
 import com.library.chapter.domain.exception.BookNotFoundException;
 import com.library.chapter.domain.model.AuthorModel;
 import com.library.chapter.domain.model.BookModel;
@@ -34,11 +35,22 @@ public class BookService {
     @Transactional
     public BookResponseDTO createBook(BookRequestDTO dto) {
 
-        AuthorModel author = authorRepository.findById(dto.getAuthorId())
-                .orElseThrow(() -> new AuthorNotFoundException(dto.getAuthorId()));
+        List<AuthorModel> authors = authorRepository.findAllById(dto.getAuthorIds());
+
+        if (authors.size() != dto.getAuthorIds().size()) {
+
+            List<Long> foundIds = authors.stream().map(AuthorModel::getId).toList();
+            List<Long> missingIds = dto.getAuthorIds().stream().filter(id -> !foundIds.contains(id)).toList();
+
+            if (missingIds.size() > 1) {
+                throw new AuthorsNotFoundException(missingIds);
+            } else {
+                throw new AuthorNotFoundException(missingIds.getFirst());
+            }
+        }
 
         BookModel book = bookMapper.toEntity(dto);
-        book.setAuthor(author);
+        book.setAuthors(authors);
 
         return bookMapper.toResponse(bookRepository.save(book));
     }
@@ -68,15 +80,21 @@ public class BookService {
         BookModel existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
 
-        if (!dto.getAuthorId().equals(existingBook.getAuthor().getId())) {
+        List<AuthorModel> newAuthors = authorRepository.findAllById(dto.getAuthorIds());
+        if (newAuthors.size() != dto.getAuthorIds().size()) {
 
-            AuthorModel newAuthor = authorRepository.findById(dto.getAuthorId())
-                    .orElseThrow(() -> new AuthorNotFoundException(dto.getAuthorId()));
+            List<Long> foundIds = newAuthors.stream().map(AuthorModel::getId).toList();
+            List<Long> missingIds = dto.getAuthorIds().stream().filter(authorId -> !foundIds.contains(authorId)).toList();
 
-            existingBook.setAuthor(newAuthor);
+            if (missingIds.size() > 1) {
+                throw new AuthorsNotFoundException(missingIds);
+            } else {
+                throw new AuthorNotFoundException(missingIds.getFirst());
+            }
         }
 
         bookMapper.updateModelFromDto(dto, existingBook);
+        existingBook.setAuthors(newAuthors);
         return bookMapper.toResponse(bookRepository.save(existingBook));
     }
 

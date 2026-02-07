@@ -29,6 +29,7 @@ public class BookModel {
     private Long id;
 
     @NotBlank
+    @Size(min = 3, max = 255)
     @Column(nullable = false)
     private String title;
 

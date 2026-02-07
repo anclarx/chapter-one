@@ -1,8 +1,8 @@
 package com.library.chapter.api.exception;
 
-import com.library.chapter.domain.exception.AuthorNotFoundException;
-import com.library.chapter.domain.exception.BookNotFoundException;
-import com.library.chapter.domain.exception.EmailAlreadyExistsException;
+import com.library.chapter.domain.exception.author.*;
+import com.library.chapter.domain.exception.book.*;
+import com.library.chapter.domain.exception.user.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +19,17 @@ public class GlobalExceptionHandler {
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        if (exception instanceof AuthorNotFoundException || exception instanceof BookNotFoundException) {
-            status = HttpStatus.NOT_FOUND;
-        } else if (exception instanceof EmailAlreadyExistsException) {
-            status = HttpStatus.CONFLICT;
+        if (exception instanceof AuthorNotFoundException || exception instanceof AuthorsNotFoundException
+                || exception instanceof BookNotFoundException) {
+            status = HttpStatus.NOT_FOUND; // 404
+        }
+        else if (exception instanceof AuthorEmailAlreadyExistsException || exception instanceof BookIsbnAlreadyExistsException) {
+            status = HttpStatus.CONFLICT; // 409
+        }
+        else if (exception instanceof InvalidBookTitleException || exception instanceof InvalidBookIsbnException
+                || exception instanceof InvalidBookPublisherException || exception instanceof InvalidAuthorNameException
+                || exception instanceof InvalidAuthorEmailException) {
+            status = HttpStatus.BAD_REQUEST; //
         }
 
         ExceptionResponse response = new ExceptionResponse(

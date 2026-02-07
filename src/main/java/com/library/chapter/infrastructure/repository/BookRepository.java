@@ -10,5 +10,7 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<BookModel, Long> {
 
     List<BookModel> findByTitleContaining(String title);
-    List<BookModel> findByAuthorsNameContaining(String name);}
+    List<BookModel> findByAuthorsNameContaining(String name);
+    boolean existsByIsbn(String isbn);
+}
 

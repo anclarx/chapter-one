@@ -3,9 +3,9 @@ package com.library.chapter.application.service;
 import com.library.chapter.api.dto.book.BookRequestDTO;
 import com.library.chapter.api.dto.book.BookResponseDTO;
 import com.library.chapter.application.mapper.BookMapper;
-import com.library.chapter.domain.exception.AuthorNotFoundException;
-import com.library.chapter.domain.exception.AuthorsNotFoundException;
-import com.library.chapter.domain.exception.BookNotFoundException;
+import com.library.chapter.domain.exception.author.AuthorNotFoundException;
+import com.library.chapter.domain.exception.author.AuthorsNotFoundException;
+import com.library.chapter.domain.exception.book.*;
 import com.library.chapter.domain.model.AuthorModel;
 import com.library.chapter.domain.model.BookModel;
 import com.library.chapter.infrastructure.repository.AuthorRepository;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +22,10 @@ public class BookService {
 
     // toEntity: RequestDTO -> Model toEntity
     // toResponse: Model -> ResponseDTO
+
+    private static final Pattern ISBN_PATTERN = Pattern.compile(
+            "^(?:ISBN(?:-13)?:? )?(?=[0-9]{13}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)97[89][- ]?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9]$"
+    );
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
@@ -35,19 +40,16 @@ public class BookService {
     @Transactional
     public BookResponseDTO createBook(BookRequestDTO dto) {
 
-        List<AuthorModel> authors = authorRepository.findAllById(dto.getAuthorIds());
+        validateTitle(dto.getTitle());
+        validatePublisher(dto.getPublisher());
+        validateIsbn(dto.getIsbn());
 
-        if (authors.size() != dto.getAuthorIds().size()) {
-
-            List<Long> foundIds = authors.stream().map(AuthorModel::getId).toList();
-            List<Long> missingIds = dto.getAuthorIds().stream().filter(id -> !foundIds.contains(id)).toList();
-
-            if (missingIds.size() > 1) {
-                throw new AuthorsNotFoundException(missingIds);
-            } else {
-                throw new AuthorNotFoundException(missingIds.getFirst());
-            }
+        if (bookRepository.existsByIsbn(dto.getIsbn())) {
+            throw new BookIsbnAlreadyExistsException(dto.getIsbn());
         }
+
+        List<AuthorModel> authors = authorRepository.findAllById(dto.getAuthorIds());
+        validateAuthors(dto.getAuthorIds(), authors);
 
         BookModel book = bookMapper.toEntity(dto);
         book.setAuthors(authors);
@@ -80,21 +82,21 @@ public class BookService {
         BookModel existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
 
-        List<AuthorModel> newAuthors = authorRepository.findAllById(dto.getAuthorIds());
-        if (newAuthors.size() != dto.getAuthorIds().size()) {
+        validateTitle(dto.getTitle());
+        validatePublisher(dto.getPublisher());
+        validateIsbn(dto.getIsbn());
 
-            List<Long> foundIds = newAuthors.stream().map(AuthorModel::getId).toList();
-            List<Long> missingIds = dto.getAuthorIds().stream().filter(authorId -> !foundIds.contains(authorId)).toList();
-
-            if (missingIds.size() > 1) {
-                throw new AuthorsNotFoundException(missingIds);
-            } else {
-                throw new AuthorNotFoundException(missingIds.getFirst());
-            }
+        if (!dto.getIsbn().equals(existingBook.getIsbn()) &&
+                bookRepository.existsByIsbn(dto.getIsbn())) {
+            throw new BookIsbnAlreadyExistsException(dto.getIsbn());
         }
 
+        List<AuthorModel> authors = authorRepository.findAllById(dto.getAuthorIds());
+        validateAuthors(dto.getAuthorIds(), authors);
+
         bookMapper.updateModelFromDto(dto, existingBook);
-        existingBook.setAuthors(newAuthors);
+        existingBook.setAuthors(authors);
+
         return bookMapper.toResponse(bookRepository.save(existingBook));
     }
 
@@ -107,5 +109,38 @@ public class BookService {
         }
 
         bookRepository.deleteById(id);
+    }
+
+    // VALIDATIONS
+    private void validateTitle(String title) {
+        if (title == null || title.trim().isEmpty() || title.length() < 1 || title.length() > 255) {
+            throw new InvalidBookTitleException();
+        }
+    }
+
+    private void validatePublisher(String publisher) {
+        if (publisher == null || publisher.trim().isEmpty() || publisher.length() < 1 || publisher.length() > 255) {
+            throw new InvalidBookPublisherException();
+        }
+    }
+
+    private void validateIsbn(String isbn) {
+        if (isbn == null || isbn.trim().isEmpty() || !ISBN_PATTERN.matcher(isbn).matches()) {
+            throw new InvalidBookIsbnException();
+        }
+    }
+
+    private void validateAuthors(List<Long> requestedIds, List<AuthorModel> foundAuthors) {
+        if (foundAuthors.size() != requestedIds.size()) {
+            List<Long> foundIds = foundAuthors.stream().map(AuthorModel::getId).toList();
+            List<Long> missingIds = requestedIds.stream()
+                    .filter(id -> !foundIds.contains(id)).toList();
+
+            if (missingIds.size() > 1) {
+                throw new AuthorsNotFoundException(missingIds);
+            } else {
+                throw new AuthorNotFoundException(missingIds.getFirst());
+            }
+        }
     }
 }

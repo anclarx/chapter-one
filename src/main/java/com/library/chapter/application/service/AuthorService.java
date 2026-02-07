@@ -5,8 +5,6 @@ import com.library.chapter.api.dto.author.AuthorResponseDTO;
 import com.library.chapter.application.mapper.AuthorMapper;
 import com.library.chapter.domain.exception.author.AuthorNotFoundException;
 import com.library.chapter.domain.exception.author.AuthorEmailAlreadyExistsException;
-import com.library.chapter.domain.exception.author.InvalidAuthorEmailException;
-import com.library.chapter.domain.exception.author.InvalidAuthorNameException;
 import com.library.chapter.domain.model.AuthorModel;
 import com.library.chapter.infrastructure.repository.AuthorRepository;
 import org.springframework.stereotype.Service;
@@ -35,9 +33,6 @@ public class AuthorService {
     // CREATE
     @Transactional
     public AuthorResponseDTO createAuthor(AuthorRequestDTO dto) {
-
-        validateName(dto.getName());
-        validateEmail(dto.getEmail());
 
         if (authorRepository.existsByEmail(dto.getEmail())) {
             throw new AuthorEmailAlreadyExistsException(dto.getEmail());
@@ -72,9 +67,6 @@ public class AuthorService {
         AuthorModel existingAuthor = authorRepository.findById(id)
                 .orElseThrow(() -> new AuthorNotFoundException(id));
 
-        validateName(dto.getName());
-        validateEmail(dto.getEmail());
-
         if (!dto.getEmail().equals(existingAuthor.getEmail()) &&
                 authorRepository.existsByEmail(dto.getEmail())) {
             throw new AuthorEmailAlreadyExistsException(dto.getEmail());
@@ -93,18 +85,5 @@ public class AuthorService {
         }
 
         authorRepository.deleteById(id);
-    }
-
-    // VALIDATIONS
-    private void validateName(String name) {
-        if (name == null || name.trim().isEmpty() || name.length() < 3 || name.length() > 255) {
-            throw new InvalidAuthorNameException();
-        }
-    }
-
-    private void validateEmail(String email) {
-        if (email == null || email.trim().isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) {
-            throw new InvalidAuthorEmailException();
-        }
     }
 }

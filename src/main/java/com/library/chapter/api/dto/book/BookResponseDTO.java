@@ -16,7 +16,6 @@ public class BookResponseDTO {
     private Long id;
     private String title;
     private String isbn;
-    // private String callNumber;
 
     private List<AuthorSummaryDTO> authors;
 

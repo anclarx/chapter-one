@@ -28,13 +28,9 @@ public class BookModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(min = 3, max = 255)
     @Column(nullable = false)
     private String title;
 
-    @NotBlank
-    @Size(max = 20)
     @Column(nullable = false, unique = true)
     private String isbn;
 
@@ -49,7 +45,6 @@ public class BookModel {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<AuthorModel> authors;
 
-    @Size(min = 3, max = 255)
     private String publisher;
     private String description;
 

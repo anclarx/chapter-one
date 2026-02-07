@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class AuthorEmailAlreadyExistsException extends RuntimeException {
 
     public AuthorEmailAlreadyExistsException(String email) {
-        super("E-mail em uso por outro autor:" + email);
+        super("Já existe um autor cadastrado com o e-mail: " + email + ".");
     }
 }

@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class AuthorNotFoundException extends RuntimeException {
 
     public AuthorNotFoundException(Long id) {
-        super("Autor não encontrado com ID: " + id);
+        super("Autor não encontrado (ID: " + id + ").");
     }
 }

@@ -40,10 +40,6 @@ public class BookService {
     @Transactional
     public BookResponseDTO createBook(BookRequestDTO dto) {
 
-        validateTitle(dto.getTitle());
-        validatePublisher(dto.getPublisher());
-        validateIsbn(dto.getIsbn());
-
         if (bookRepository.existsByIsbn(dto.getIsbn())) {
             throw new BookIsbnAlreadyExistsException(dto.getIsbn());
         }
@@ -82,10 +78,6 @@ public class BookService {
         BookModel existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
 
-        validateTitle(dto.getTitle());
-        validatePublisher(dto.getPublisher());
-        validateIsbn(dto.getIsbn());
-
         if (!dto.getIsbn().equals(existingBook.getIsbn()) &&
                 bookRepository.existsByIsbn(dto.getIsbn())) {
             throw new BookIsbnAlreadyExistsException(dto.getIsbn());
@@ -111,25 +103,7 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
-    // VALIDATIONS
-    private void validateTitle(String title) {
-        if (title == null || title.trim().isEmpty() || title.length() < 1 || title.length() > 255) {
-            throw new InvalidBookTitleException();
-        }
-    }
-
-    private void validatePublisher(String publisher) {
-        if (publisher == null || publisher.trim().isEmpty() || publisher.length() < 1 || publisher.length() > 255) {
-            throw new InvalidBookPublisherException();
-        }
-    }
-
-    private void validateIsbn(String isbn) {
-        if (isbn == null || isbn.trim().isEmpty() || !ISBN_PATTERN.matcher(isbn).matches()) {
-            throw new InvalidBookIsbnException();
-        }
-    }
-
+    // VALIDATION
     private void validateAuthors(List<Long> requestedIds, List<AuthorModel> foundAuthors) {
         if (foundAuthors.size() != requestedIds.size()) {
             List<Long> foundIds = foundAuthors.stream().map(AuthorModel::getId).toList();

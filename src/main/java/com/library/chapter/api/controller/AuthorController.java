@@ -23,8 +23,8 @@ public class AuthorController {
     // CREATE
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthorResponseDTO createAuthor(@Valid @RequestBody AuthorRequestDTO author) {
-        return authorService.createAuthor(author);
+    public AuthorResponseDTO createAuthor(@Valid @RequestBody AuthorRequestDTO dto) {
+        return authorService.createAuthor(dto);
     }
 
     // READ
@@ -41,8 +41,8 @@ public class AuthorController {
 
     // UPDATE
     @PutMapping("/{id}")
-    public AuthorResponseDTO updateAuthor(@PathVariable Long id, @Valid @RequestBody AuthorRequestDTO author) {
-        return authorService.updateAuthor(id, author);
+    public AuthorResponseDTO updateAuthor(@PathVariable Long id, @Valid @RequestBody AuthorRequestDTO dto) {
+        return authorService.updateAuthor(id, dto);
     }
 
     // DELETE

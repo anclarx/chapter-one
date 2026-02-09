@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,9 +18,6 @@ public class AuthorService {
 
     // toEntity: RequestDTO -> Model toEntity
     // toResponse: Model -> ResponseDTO
-
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,10 +21,6 @@ public class BookService {
 
     // toEntity: RequestDTO -> Model toEntity
     // toResponse: Model -> ResponseDTO
-
-    private static final Pattern ISBN_PATTERN = Pattern.compile(
-            "^(?:ISBN(?:-13)?:? )?(?=[0-9]{13}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)97[89][- ]?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9]$"
-    );
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
@@ -97,7 +92,7 @@ public class BookService {
     public void deleteBook(Long id) {
 
         if (!bookRepository.existsById(id)) {
-            throw new AuthorNotFoundException(id);
+            throw new BookNotFoundException(id);
         }
 
         bookRepository.deleteById(id);

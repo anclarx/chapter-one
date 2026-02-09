@@ -25,8 +25,8 @@ public class BookController {
     // CREATE
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookResponseDTO createBook(@Valid @RequestBody BookRequestDTO book) {
-        return bookService.createBook(book);
+    public BookResponseDTO createBook(@Valid @RequestBody BookRequestDTO dto) {
+        return bookService.createBook(dto);
     }
 
     // READ
@@ -43,8 +43,8 @@ public class BookController {
 
     // UPDATE
     @PostMapping("/{id}")
-    public BookResponseDTO updateBook(@PathVariable Long id, @Valid @RequestBody BookRequestDTO book) {
-        return bookService.updateBook(id, book);
+    public BookResponseDTO updateBook(@PathVariable Long id, @Valid @RequestBody BookRequestDTO dto) {
+        return bookService.updateBook(id, dto);
     }
 
     // DELETE

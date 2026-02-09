@@ -1,6 +1,5 @@
 package com.library.chapter.api.dto.user;
 
-import com.library.chapter.domain.model.enums.UserPriorityLevelEnum;
 import com.library.chapter.domain.model.enums.UserTypeEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -26,9 +25,6 @@ public class UserRequestDTO {
 
     @NotNull(message = "O tipo de usuário é obrigatório.")
     private UserTypeEnum type;
-
-    @NotNull(message = "O nível de prioridade do usuário é obrigatório.")
-    private UserPriorityLevelEnum priorityLevel;
 
     @NotBlank(message = "A senha é obrigatória.")
     @Size(min = 8, max = 20, message = "A senha deve ter entre 8 e 20 caracteres.")

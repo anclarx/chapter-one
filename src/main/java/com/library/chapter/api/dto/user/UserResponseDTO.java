@@ -1,6 +1,5 @@
 package com.library.chapter.api.dto.user;
 
-import com.library.chapter.domain.model.enums.UserPriorityLevelEnum;
 import com.library.chapter.domain.model.enums.UserTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +14,4 @@ public class UserResponseDTO {
     private String name;
     private String email;
     private UserTypeEnum type;
-    private UserPriorityLevelEnum priorityLevel;
-    private String passwordHash;
 }

@@ -1,6 +1,5 @@
 package com.library.chapter.domain.model;
 
-import com.library.chapter.domain.model.enums.UserPriorityLevelEnum;
 import com.library.chapter.domain.model.enums.UserTypeEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,10 +28,6 @@ public class UserModel {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserTypeEnum type;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserPriorityLevelEnum priorityLevel;
 
     @Column(nullable = false)
     private String passwordHash;

@@ -13,6 +13,5 @@ public class BookCopyResponseDTO {
 
     private Long id;
     private BookSummaryDTO bookModel;
-    private Integer catalogCopy;
     private BookCopyStatusEnum status;
 }

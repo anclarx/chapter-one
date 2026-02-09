@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Entity(name = "books_copy")
+@Entity(name = "book_copies")
 public class BookCopyModel {
 
     @EqualsAndHashCode.Include
@@ -19,9 +19,6 @@ public class BookCopyModel {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
     private BookModel bookModel;
-
-    @Column(nullable = false)
-    private Integer catalogCopy;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

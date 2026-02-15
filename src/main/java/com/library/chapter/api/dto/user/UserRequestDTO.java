@@ -1,10 +1,7 @@
 package com.library.chapter.api.dto.user;
 
 import com.library.chapter.domain.model.enums.UserTypeEnum;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +15,10 @@ public class UserRequestDTO {
     @Size(min = 3, max = 255, message = "O nome deve ter entre 3 e 255 caracteres.")
     private String name;
 
+    @NotBlank(message = "O login é obrigatório.")
+    @Size(min = 8, message = "O login deve ter no mínimo 8 caracteres.")
+    private String login;
+
     @NotBlank(message = "O e-mail é obrigatório.")
     @Size(max = 255, message = "O e-mail não pode exceder 255 caracteres.")
     @Email(message = "O e-mail informado é inválido.")
@@ -27,6 +28,6 @@ public class UserRequestDTO {
     private UserTypeEnum type;
 
     @NotBlank(message = "A senha é obrigatória.")
-    @Size(min = 8, max = 20, message = "A senha deve ter entre 8 e 20 caracteres.")
+    @Size(min = 8, message = "A senha deve ter no mínimo 8 caracteres.")
     private String password;
 }
